@@ -60,6 +60,10 @@ func (c *Commandor) playWin(videoKey string) {
 	c.execCommand([]string{
 		fmt.Sprintf(`export DISPLAY=:0.0 && %s & sleep 2 && %s type "youtube.com/watch?v=%s" && %s key Return`, c.browserPath, c.xdotool, videoKey, c.xdotool),
 		fmt.Sprintf(`%s windowactivate $(%s search --name '%s')`, c.xdotool, c.xdotool, c.appWindow),
+		fmt.Sprintf("%s mousemove 500 500", c.xdotool),
+		fmt.Sprintf("%s click 1", c.xdotool),
+		fmt.Sprintf("%s key f", c.xdotool),
+		fmt.Sprintf("%s key Space", c.xdotool),
 	})
 }
 
