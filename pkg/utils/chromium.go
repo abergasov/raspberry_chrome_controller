@@ -73,7 +73,7 @@ func (c *Commandor) closeAll() {
 func (c *Commandor) findWin() {}
 
 func (c *Commandor) execCommand(command string) {
-	cmd := exec.Command("/bin/sh", "-c", fmt.Sprintf(" su pi '%s'", command))
+	cmd := exec.Command("/bin/sh", "-c", fmt.Sprintf(" su pi -c '%s'", command))
 	//cmd := exec.Command(command)
 	err := cmd.Run()
 	if err != nil {
