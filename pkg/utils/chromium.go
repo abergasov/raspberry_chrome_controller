@@ -69,7 +69,7 @@ func (c *Commandor) playWin(videoKey string) {
 
 func (c *Commandor) closeAll() {
 	c.execCommand([]string{
-		fmt.Sprintf("export DISPLAY=:0.0 && xdotool windowkill $(xdotool search --name '%s')", c.appWindow),
+		fmt.Sprintf("export DISPLAY=:0.0 && %s windowkill $(%s search --name '%s')", c.xdotool, c.appWindow, c.xdotool),
 	})
 	c.muV.Lock()
 	c.videos = map[string]string{}
