@@ -1,3 +1,4 @@
 host_url: localhost:8090
-path: ws/client/pi
+path: bot/ws/client/pi
+use_ssl: true
 key_token: Vc9RroHkRPjPE13vaL3DO9jp1SpIU9yN792zSOeuzwT62BoHQjQ7me9TiM5Dc2YSHIlghu9FTQgEBqxvF4e

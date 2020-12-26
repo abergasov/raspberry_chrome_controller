@@ -13,6 +13,7 @@ import (
 type AppConfig struct {
 	HostURL  string `yaml:"host_url"`
 	Path     string `yaml:"path"`
+	UseSSL   bool   `yaml:"use_ssl"`
 	KeyToken string `yaml:"key_token"`
 }
 

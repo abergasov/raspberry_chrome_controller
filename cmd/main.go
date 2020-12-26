@@ -25,7 +25,11 @@ func main() {
 	piCmd := PiCommander{
 		commando: utils.NewCommandor(),
 	}
-	u := url.URL{Scheme: "ws", Host: appConf.HostURL, Path: appConf.Path}
+	scheme := "ws"
+	if appConf.UseSSL {
+		scheme = "wss"
+	}
+	u := url.URL{Scheme: scheme, Host: appConf.HostURL, Path: appConf.Path}
 	for {
 		log.Printf("connecting to %s/%s", appConf.HostURL, appConf.Path)
 		err := piCmd.connect(&u, appConf.KeyToken)
