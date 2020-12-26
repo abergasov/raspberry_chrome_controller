@@ -28,16 +28,20 @@ const (
 )
 
 type Commandor struct {
-	appWindow string
-	muV       *sync.RWMutex
-	videos    map[string]string
+	appWindow   string
+	muV         *sync.RWMutex
+	videos      map[string]string
+	xdotool     string
+	browserPath string
 }
 
 func NewCommandor() *Commandor {
 	return &Commandor{
-		appWindow: "Chromium",
-		videos:    make(map[string]string),
-		muV:       &sync.RWMutex{},
+		appWindow:   "Chromium",
+		videos:      make(map[string]string),
+		muV:         &sync.RWMutex{},
+		xdotool:     "/usr/bin/xdotool",
+		browserPath: "/usr/bin/chromium-browser",
 	}
 }
 
@@ -53,9 +57,9 @@ func (c *Commandor) HandleCommand(cmd *Command) {
 
 func (c *Commandor) playWin(videoKey string) {
 	c.closeAll()
-	cmd := fmt.Sprintf(`export DISPLAY=:0.0 && chromium-browser & sleep 2 && xdotool type "youtube.com/watch?v=%s" && xdotool key Return`, videoKey)
+	cmd := fmt.Sprintf(`export DISPLAY=:0.0 && %s & sleep 2 && %s type "youtube.com/watch?v=%s" && %s key Return`, c.browserPath, c.xdotool, videoKey, c.xdotool)
 	c.execCommand(cmd)
-	cmd = fmt.Sprintf(`xdotool windowactivate $(xdotool search --name '%s')`, c.appWindow)
+	cmd = fmt.Sprintf(`%s windowactivate $(%s search --name '%s')`, c.xdotool, c.xdotool, c.appWindow)
 }
 
 func (c *Commandor) closeAll() {
