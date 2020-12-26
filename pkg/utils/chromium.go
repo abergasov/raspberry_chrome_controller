@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
+	"strings"
 	"sync"
 )
 
@@ -57,14 +58,16 @@ func (c *Commandor) HandleCommand(cmd *Command) {
 
 func (c *Commandor) playWin(videoKey string) {
 	c.closeAll()
-	c.execCommand([]string{
-		fmt.Sprintf(`export DISPLAY=:0.0 && %s & sleep 2 && %s type "youtube.com/watch?v=%s" && %s key Return`, c.browserPath, c.xdotool, videoKey, c.xdotool),
-		fmt.Sprintf(`%s windowactivate $(%s search --name '%s')`, c.xdotool, c.xdotool, c.appWindow),
-		fmt.Sprintf("%s mousemove 500 500", c.xdotool),
-		fmt.Sprintf("%s click 1", c.xdotool),
-		fmt.Sprintf("%s key f", c.xdotool),
-		fmt.Sprintf("%s key Space", c.xdotool),
-	})
+	cmdList := []string{
+		"/usr/bin/chromium-browser & sleep 2",
+		fmt.Sprintf(`xdotool type "youtube.com/watch?v=%s"`, videoKey),
+		"xdotool key Return",
+		"xdotool windowactivate $(%s search --name 'Chromium')",
+		"xdotool mousemove 500 500",
+		"xdotool click 1",
+		"xdotool key Space",
+	}
+	c.execCommand(cmdList)
 }
 
 func (c *Commandor) closeAll() {
@@ -79,13 +82,12 @@ func (c *Commandor) closeAll() {
 func (c *Commandor) findWin() {}
 
 func (c *Commandor) execCommand(commands []string) {
-	for _, command := range commands {
-		cmd := exec.Command("/bin/sh", "-c", command)
-		//cmd := exec.Command(command)
-		err := cmd.Run()
-		if err != nil {
-			log.Printf("error execute %s, %s", command, err.Error())
-			return
-		}
+	command := "export DISPLAY=:0.0 && " + strings.Join(commands, " && ")
+	cmd := exec.Command("/bin/sh", "-c", command)
+	//cmd := exec.Command(command)
+	err := cmd.Run()
+	if err != nil {
+		log.Printf("error execute %s, %s", command, err.Error())
+		return
 	}
 }
