@@ -57,14 +57,16 @@ func (c *Commandor) HandleCommand(cmd *Command) {
 
 func (c *Commandor) playWin(videoKey string) {
 	c.closeAll()
-	cmd := fmt.Sprintf(`export DISPLAY=:0.0 && %s & sleep 2 && %s type "youtube.com/watch?v=%s" && %s key Return`, c.browserPath, c.xdotool, videoKey, c.xdotool)
-	c.execCommand(cmd)
-	cmd = fmt.Sprintf(`%s windowactivate $(%s search --name '%s')`, c.xdotool, c.xdotool, c.appWindow)
+	c.execCommand([]string{
+		fmt.Sprintf(`export DISPLAY=:0.0 && %s & sleep 2 && %s type "youtube.com/watch?v=%s" && %s key Return`, c.browserPath, c.xdotool, videoKey, c.xdotool),
+		fmt.Sprintf(`%s windowactivate $(%s search --name '%s')`, c.xdotool, c.xdotool, c.appWindow),
+	})
 }
 
 func (c *Commandor) closeAll() {
-	command := fmt.Sprintf("export DISPLAY=:0.0 && xdotool windowkill $(xdotool search --name '%s')", c.appWindow)
-	c.execCommand(command)
+	c.execCommand([]string{
+		fmt.Sprintf("export DISPLAY=:0.0 && xdotool windowkill $(xdotool search --name '%s')", c.appWindow),
+	})
 	c.muV.Lock()
 	c.videos = map[string]string{}
 	c.muV.Unlock()
@@ -72,12 +74,14 @@ func (c *Commandor) closeAll() {
 
 func (c *Commandor) findWin() {}
 
-func (c *Commandor) execCommand(command string) {
-	cmd := exec.Command("/bin/sh", "-c", command)
-	//cmd := exec.Command(command)
-	err := cmd.Run()
-	if err != nil {
-		log.Printf("error execute %s, %s", command, err.Error())
-		return
+func (c *Commandor) execCommand(commands []string) {
+	for _, command := range commands {
+		cmd := exec.Command("/bin/sh", "-c", command)
+		//cmd := exec.Command(command)
+		err := cmd.Run()
+		if err != nil {
+			log.Printf("error execute %s, %s", command, err.Error())
+			return
+		}
 	}
 }
