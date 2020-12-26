@@ -63,7 +63,7 @@ func (c *Commandor) playWin(videoKey string) {
 		fmt.Sprintf(`xdotool type "youtube.com/watch?v=%s"`, videoKey),
 		"xdotool key Return",
 		"xdotool windowactivate $(%s search --name 'Chromium')",
-		"xdotool mousemove 500 500",
+		"xdotool mousemove 600 600",
 		"xdotool click 1",
 		"xdotool key Space",
 	}
