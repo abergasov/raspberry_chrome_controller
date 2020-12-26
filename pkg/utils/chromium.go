@@ -35,7 +35,7 @@ type Commandor struct {
 
 func NewCommandor() *Commandor {
 	return &Commandor{
-		appWindow: "Firefox",
+		appWindow: "Chromium",
 		videos:    make(map[string]string),
 		muV:       &sync.RWMutex{},
 	}
@@ -47,15 +47,15 @@ func (c *Commandor) HandleCommand(cmd *Command) {
 	case CLOSE:
 		c.closeAll()
 	case PLAY:
-		c.playWin(cmd.Cmd, cmd.ActionID)
+		c.playWin(cmd.ActionID)
 	}
 }
 
-func (c *Commandor) playWin(command, videoKey string) {
-	winID := ""
-	c.muV.Lock()
-	c.videos[videoKey] = winID
-	c.muV.Unlock()
+func (c *Commandor) playWin(videoKey string) {
+	c.closeAll()
+	cmd := fmt.Sprintf(`export DISPLAY=:0.0 && chromium-browser & sleep 2 && xdotool type "youtube.com/watch?v=%s" && xdotool key Return`, videoKey)
+	c.execCommand(cmd)
+	cmd = fmt.Sprintf(`xdotool windowactivate $(xdotool search --name '%s')`, c.appWindow)
 }
 
 func (c *Commandor) closeAll() {
