@@ -69,8 +69,8 @@ func (c *Commandor) closeAll() {
 func (c *Commandor) findWin() {}
 
 func (c *Commandor) execCommand(command string) {
-	//cmd := exec.Command("/bin/sh", "-c", command)
-	cmd := exec.Command(command)
+	cmd := exec.Command("/usr/bin/bash", "-c", command)
+	//cmd := exec.Command(command)
 	err := cmd.Run()
 	if err != nil {
 		log.Printf("error execute %s, %s", command, err.Error())
