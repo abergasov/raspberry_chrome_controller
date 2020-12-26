@@ -1,14 +1,15 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 	"raspberry_chrome_controller/pkg/config"
 	"raspberry_chrome_controller/pkg/logger"
 	"raspberry_chrome_controller/pkg/utils"
-
-	"github.com/gorilla/websocket"
+	"time"
 
 	"go.uber.org/zap"
 )
@@ -25,33 +26,40 @@ func main() {
 	piCmd := PiCommander{
 		commando: utils.NewCommandor(),
 	}
-	scheme := "ws"
-	if appConf.UseSSL {
-		scheme = "wss"
-	}
-	u := url.URL{Scheme: scheme, Host: appConf.HostURL, Path: appConf.Path}
-	for {
-		log.Printf("connecting to %s/%s", appConf.HostURL, appConf.Path)
-		err := piCmd.connect(&u, appConf.KeyToken)
-		if err != nil {
-			log.Println("error in socket connection", err.Error())
-		}
+
+	ticker := time.NewTicker(150 * time.Millisecond)
+
+	var str []byte
+	client := &http.Client{}
+	req, _ := http.NewRequest("POST", appConf.FullPath, bytes.NewBuffer(str))
+	req.Header.Set("Token", appConf.KeyToken)
+	for range ticker.C {
+		piCmd.curlConnect(client, req)
 	}
 }
 
-func (p *PiCommander) connect(u *url.URL, token string) error {
-	c, _, err := websocket.DefaultDialer.Dial(u.String(), http.Header{"Token": []string{token}})
+func (p *PiCommander) curlConnect(client *http.Client, req *http.Request) {
+	response, err := client.Do(req)
 	if err != nil {
-		return err
+		log.Println("error in curl request", err.Error())
+		return
 	}
-	defer c.Close()
-
-	for {
-		_, message, errR := c.ReadMessage()
-		if errR != nil {
-			return errR
-		}
-		log.Printf("recv: %s", message)
-		p.commando.HandleCommand(message)
+	defer response.Body.Close()
+	body, errB := ioutil.ReadAll(response.Body)
+	if errB != nil {
+		log.Println("error in parse curl request", errB.Error())
+		return
+	}
+	var pR struct {
+		Ok  bool           `json:"ok"`
+		Cmd *utils.Command `json:"cmd"`
+	}
+	err = json.Unmarshal(body, &pR)
+	if err != nil {
+		log.Println("error in parse curl request", err.Error())
+		return
+	}
+	if pR.Cmd != nil {
+		p.commando.HandleCommand(pR.Cmd)
 	}
 }

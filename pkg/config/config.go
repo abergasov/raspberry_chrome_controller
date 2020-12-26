@@ -15,6 +15,7 @@ type AppConfig struct {
 	Path     string `yaml:"path"`
 	UseSSL   bool   `yaml:"use_ssl"`
 	KeyToken string `yaml:"key_token"`
+	FullPath string `yaml:"full_path"`
 }
 
 func InitConf(confFilePath string) *AppConfig {

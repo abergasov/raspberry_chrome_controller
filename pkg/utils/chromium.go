@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os/exec"
@@ -42,14 +41,8 @@ func NewCommandor() *Commandor {
 	}
 }
 
-func (c *Commandor) HandleCommand(command []byte) {
-	var cmd Command
-	err := json.Unmarshal(command, &cmd)
-	if err != nil {
-		log.Printf("error parse command %s", string(command))
-		return
-	}
-
+func (c *Commandor) HandleCommand(cmd *Command) {
+	log.Println(fmt.Sprintf("handle command action: %s 4 %s", cmd.Cmd, cmd.ActionID))
 	switch cmd.Cmd {
 	case CLOSE:
 		c.closeAll()
