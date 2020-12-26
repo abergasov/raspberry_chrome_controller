@@ -53,13 +53,13 @@ func (c *Commandor) HandleCommand(cmd *Command) {
 
 func (c *Commandor) playWin(videoKey string) {
 	c.closeAll()
-	cmd := fmt.Sprintf(`export DISPLAY=:0.0 && chromium-browser & sleep 2 && xdotool type "youtube.com/watch?v=%s" && xdotool key Return`, videoKey)
+	cmd := fmt.Sprintf(`env DISPLAY=:0 && chromium-browser & sleep 2 && xdotool type "youtube.com/watch?v=%s" && xdotool key Return`, videoKey)
 	c.execCommand(cmd)
 	cmd = fmt.Sprintf(`xdotool windowactivate $(xdotool search --name '%s')`, c.appWindow)
 }
 
 func (c *Commandor) closeAll() {
-	command := fmt.Sprintf("export DISPLAY=:0.0 && xdotool windowkill $(xdotool search --name '%s')", c.appWindow)
+	command := fmt.Sprintf("env DISPLAY=:0 && xdotool windowkill $(xdotool search --name '%s')", c.appWindow)
 	c.execCommand(command)
 	c.muV.Lock()
 	c.videos = map[string]string{}
