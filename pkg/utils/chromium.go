@@ -69,7 +69,7 @@ func (c *Commandor) closeAll() {
 func (c *Commandor) findWin() {}
 
 func (c *Commandor) execCommand(command string) {
-	cmd := exec.Command("/usr/bin/su pi", "-c", command)
+	cmd := exec.Command("/bin/sh su pi", "-c", command)
 	//cmd := exec.Command(command)
 	err := cmd.Run()
 	if err != nil {
