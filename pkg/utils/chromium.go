@@ -24,6 +24,8 @@ const (
 	PLAY         = "k"
 	CLOSE        = "l"
 	FULL_SCREEN  = "f"
+	VOLUME_UP    = "v"
+	VOLUME_DOWN  = "x"
 )
 
 type Commandor struct {
@@ -43,6 +45,12 @@ func NewCommandor() *Commandor {
 func (c *Commandor) HandleCommand(cmd *Command) {
 	log.Println(fmt.Sprintf("handle command action: %s 4 %s", cmd.Cmd, cmd.ActionID))
 	switch cmd.Cmd {
+	case VOLUME_DOWN:
+		c.execKey("Down")
+		return
+	case VOLUME_UP:
+		c.execKey("Up")
+		return
 	case SPEED_UP:
 		c.execComboKey("shift", "greater")
 		return
