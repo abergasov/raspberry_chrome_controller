@@ -113,6 +113,7 @@ func (c *Commandor) playWin(videoKey string) {
 		"xdotool mousemove 500 500",
 		"xdotool click 1",
 		"xdotool key space",
+		"xdotool key f",
 	}
 	c.execCommand(cmdList)
 	c.muV.Lock()
