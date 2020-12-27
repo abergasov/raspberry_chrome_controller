@@ -2,6 +2,7 @@ install:
 	@echo "-- creating service"
 	sudo mkdir -p /home/pi/.config/autostart/
 	sudo cp commando.desktop /home/pi/.config/autostart/commando.desktop
+	sudo cp configs/conf.yaml /etc/commando.yaml
 	sudo cp bin/commando /usr/bin/commando
 	sudo chmod +x /usr/bin/commando
 

@@ -20,7 +20,7 @@ type PiCommander struct {
 
 func main() {
 	logger.NewLogger()
-	appConf := config.InitConf("/configs/conf.yaml")
+	appConf := config.InitConf("/etc/commando.yaml")
 	logger.Info("Starting app", zap.String("token", appConf.KeyToken), zap.String("host", appConf.HostURL))
 
 	piCmd := PiCommander{
