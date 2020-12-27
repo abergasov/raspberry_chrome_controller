@@ -46,21 +46,21 @@ func (c *Commandor) HandleCommand(cmd *Command) {
 	log.Println(fmt.Sprintf("handle command action: %s 4 %s", cmd.Cmd, cmd.ActionID))
 	switch cmd.Cmd {
 	case SPEED_UP:
-		c.execComboKey("shift", ".")
+		c.execComboKey("shift", "greater")
 	case SPEED_LESS:
-		c.execComboKey("shift", ",")
+		c.execComboKey("shift", "less")
 	case BACK:
-		c.execComboKey("shift", "<")
+		c.execComboKey("shift", "Left")
 	case BACK_MORE:
-		c.execComboKey("shift", "<")
-		c.execComboKey("shift", "<")
-		c.execComboKey("shift", "<")
+		c.execComboKey("shift", "Left")
+		c.execComboKey("shift", "Left")
+		c.execComboKey("shift", "Left")
 	case FORWARD:
-		c.execComboKey("shift", ">")
+		c.execComboKey("shift", "Right")
 	case FORWARD_MORE:
-		c.execComboKey("shift", ">")
-		c.execComboKey("shift", ">")
-		c.execComboKey("shift", ">")
+		c.execComboKey("shift", "Right")
+		c.execComboKey("shift", "Right")
+		c.execComboKey("shift", "Right")
 	case CLOSE:
 		c.closeAll()
 	case PLAY:
