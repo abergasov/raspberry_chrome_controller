@@ -1,4 +1,6 @@
 install:
+	@echo "-- pull changes"
+	git pull origin master
 	@echo "-- creating service"
 	sudo mkdir -p /home/pi/.config/autostart/
 	sudo cp commando.desktop /home/pi/.config/autostart/commando.desktop

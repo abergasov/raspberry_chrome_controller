@@ -18,13 +18,7 @@ type AppConfig struct {
 	FullPath string `yaml:"full_path"`
 }
 
-func InitConf(confFilePath string) *AppConfig {
-	path, err := os.Getwd()
-	if err != nil {
-		logger.Fatal("Can't locate current dir", err)
-	}
-
-	confFile := path + confFilePath
+func InitConf(confFile string) *AppConfig {
 	confFile = filepath.Clean(confFile)
 	logger.Info("Try read config file", zap.String("path", confFile))
 
@@ -35,7 +29,7 @@ func InitConf(confFilePath string) *AppConfig {
 	defer file.Close()
 	var cfg AppConfig
 	decoder := yaml.NewDecoder(file)
-	err = decoder.Decode(&cfg)
+	err := decoder.Decode(&cfg)
 	if err != nil {
 		logger.Fatal("Invalid config file", err)
 	}
