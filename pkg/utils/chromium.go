@@ -125,7 +125,7 @@ func (c *Commandor) playWin(videoKey string) {
 	}
 	c.closeAll()
 	c.execCommand([]string{
-		"/usr/bin/chromium-browser",
+		"/usr/bin/chromium-browser > /dev/null & disown",
 	})
 	c.muV.Lock()
 	c.playing = videoKey
