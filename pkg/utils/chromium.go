@@ -114,6 +114,7 @@ func (c *Commandor) execComboKey(key1, key2 string) {
 }
 
 func (c *Commandor) playWin(videoKey string) {
+	videoKey = strings.ReplaceAll(videoKey, "%", "_")
 	if c.playing == videoKey {
 		c.execCommand([]string{
 			"xdotool mousemove 500 500",
@@ -123,7 +124,7 @@ func (c *Commandor) playWin(videoKey string) {
 	}
 	c.closeAll()
 	cmdList := []string{
-		"/usr/bin/chromium-browser & sleep 2",
+		"/usr/bin/chromium-browser & sleep 3",
 		fmt.Sprintf(`xdotool type "youtube.com/watch?v=%s"`, videoKey),
 		"xdotool key Return",
 		//"xdotool windowactivate $(%s search --name 'Chromium')",
