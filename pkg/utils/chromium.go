@@ -25,20 +25,16 @@ const (
 )
 
 type Commandor struct {
-	appWindow   string
-	muV         *sync.RWMutex
-	videos      map[string]float32
-	xdotool     string
-	browserPath string
+	appWindow string
+	muV       *sync.RWMutex
+	playing   bool
 }
 
 func NewCommandor() *Commandor {
 	return &Commandor{
-		appWindow:   "Chromium",
-		videos:      make(map[string]float32),
-		muV:         &sync.RWMutex{},
-		xdotool:     "/usr/bin/xdotool",
-		browserPath: "/usr/bin/chromium-browser",
+		appWindow: "Chromium",
+		playing:   false,
+		muV:       &sync.RWMutex{},
 	}
 }
 
@@ -87,6 +83,14 @@ func (c *Commandor) execComboKey(key1, key2 string) {
 }
 
 func (c *Commandor) playWin(videoKey string) {
+	if c.playing {
+		c.execCommand([]string{
+			"xdotool mousemove 500 500",
+			"xdotool click 1",
+			"xdotool key space",
+		})
+		return
+	}
 	c.closeAll()
 	cmdList := []string{
 		"/usr/bin/chromium-browser & sleep 2",
@@ -100,8 +104,7 @@ func (c *Commandor) playWin(videoKey string) {
 	}
 	c.execCommand(cmdList)
 	c.muV.Lock()
-	c.videos = map[string]float32{}
-	c.videos["speed"] = 1
+	c.playing = true
 	c.muV.Unlock()
 }
 
@@ -110,7 +113,7 @@ func (c *Commandor) closeAll() {
 		"xdotool windowkill $(xdotool search --name 'Chromium')",
 	})
 	c.muV.Lock()
-	c.videos = map[string]float32{}
+	c.playing = false
 	c.muV.Unlock()
 }
 
