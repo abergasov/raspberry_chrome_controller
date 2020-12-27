@@ -123,7 +123,24 @@ func (c *Commandor) playWin(videoKey string) {
 		})
 		return
 	}
-	c.closeAll()
+	if c.playing != "" {
+		c.muV.Lock()
+		c.playing = videoKey
+		c.muV.Unlock()
+		c.execComboKey("ctrl", "t")
+		c.execCommand([]string{`xdotool type "youtube.com/watch?v="` + videoKey})
+		c.execComboKey("ctrl", "1")
+		c.execComboKey("ctrl", "w")
+		c.execCommand([]string{
+			"sleep 2",
+			"xdotool mousemove 500 500",
+			"xdotool click 1",
+			"xdotool key space",
+			"xdotool key f",
+		})
+		return
+	}
+	//c.closeAll()
 	c.execCommand([]string{
 		"/usr/bin/chromium-browser > /dev/null & disown",
 	})
