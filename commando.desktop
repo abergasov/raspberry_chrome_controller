@@ -1,3 +1,3 @@
 [Desktop Entry]
 Type=Application
-Exec=bash -c "sleep 7 && cd /home/pi/go/src/raspberry_chrome_controller && make run"
+Exec=bash -c "sleep 7 && commando"
