@@ -47,8 +47,10 @@ func (c *Commandor) HandleCommand(cmd *Command) {
 	switch cmd.Cmd {
 	case VOLUME_DOWN:
 		c.execKey("Down")
+		c.execKey("Down")
 		return
 	case VOLUME_UP:
+		c.execKey("Up")
 		c.execKey("Up")
 		return
 	case SPEED_UP:
