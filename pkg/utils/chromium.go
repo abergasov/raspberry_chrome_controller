@@ -70,7 +70,7 @@ func (c *Commandor) HandleCommand(cmd *Command) {
 
 func (c *Commandor) execKey(key string) {
 	c.execCommand([]string{
-		"xdotool windowactivate $(%s search --name 'Chromium')",
+		//"xdotool windowactivate $(%s search --name 'Chromium')",
 		"xdotool mousemove 500 500",
 		fmt.Sprintf("xdotool key %s", key),
 	})
@@ -78,7 +78,7 @@ func (c *Commandor) execKey(key string) {
 
 func (c *Commandor) execComboKey(key1, key2 string) {
 	c.execCommand([]string{
-		"xdotool windowactivate $(%s search --name 'Chromium')",
+		//"xdotool windowactivate $(%s search --name 'Chromium')",
 		"xdotool mousemove 500 500",
 		fmt.Sprintf("xdotool keydown %s keydown %s", key1, key2),
 		"sleep 0.1",
