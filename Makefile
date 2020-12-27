@@ -3,6 +3,9 @@ install:
 	sudo mkdir -p /home/pi/.config/autostart/
 	sudo cp commando.desktop /home/pi/.config/autostart/commando.desktop
 
+build_rasp:
+	env GOOS=linux GOARCH=arm GOARM=5 go build -o ./bin/commando ./cmd
+
 build:
 	@echo "-- pull changes"
 	git pull origin master
