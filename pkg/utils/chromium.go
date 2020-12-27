@@ -87,7 +87,6 @@ func (c *Commandor) playWin(videoKey string) {
 		c.execCommand([]string{
 			"xdotool mousemove 500 500",
 			"xdotool click 1",
-			"xdotool key space",
 		})
 		return
 	}
