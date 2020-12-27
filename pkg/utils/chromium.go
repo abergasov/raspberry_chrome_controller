@@ -23,6 +23,7 @@ const (
 	BACK_MORE    = "j"
 	PLAY         = "k"
 	CLOSE        = "l"
+	FULL_SCREEN  = "f"
 )
 
 type Commandor struct {
@@ -58,6 +59,9 @@ func (c *Commandor) HandleCommand(cmd *Command) {
 		return
 	case FORWARD:
 		c.execComboKey("shift", "Right")
+		return
+	case FULL_SCREEN:
+		c.execKey("f")
 		return
 	case FORWARD_MORE:
 		c.execComboKey("shift", "Right")
