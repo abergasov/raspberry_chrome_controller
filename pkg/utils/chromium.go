@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 )
 
 type Command struct {
@@ -123,8 +124,14 @@ func (c *Commandor) playWin(videoKey string) {
 		return
 	}
 	c.closeAll()
-	cmdList := []string{
-		"/usr/bin/chromium-browser & sleep 3",
+	c.execCommand([]string{
+		"/usr/bin/chromium-browser",
+	})
+	c.muV.Lock()
+	c.playing = videoKey
+	c.muV.Unlock()
+	time.Sleep(3 * time.Second)
+	c.execCommand([]string{
 		fmt.Sprintf(`xdotool type "youtube.com/watch?v=%s"`, videoKey),
 		"xdotool key Return",
 		//"xdotool windowactivate $(%s search --name 'Chromium')",
@@ -133,11 +140,7 @@ func (c *Commandor) playWin(videoKey string) {
 		"xdotool click 1",
 		"xdotool key space",
 		"xdotool key f",
-	}
-	c.execCommand(cmdList)
-	c.muV.Lock()
-	c.playing = videoKey
-	c.muV.Unlock()
+	})
 }
 
 func (c *Commandor) closeAll() {
