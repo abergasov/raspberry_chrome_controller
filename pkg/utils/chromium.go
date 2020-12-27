@@ -129,8 +129,11 @@ func (c *Commandor) playWin(videoKey string) {
 		c.muV.Unlock()
 		c.execComboKey("ctrl", "t")
 		time.Sleep(1 * time.Second)
-		c.execCommand([]string{fmt.Sprintf(`xdotool type "youtube.com/watch?v=%s"`, videoKey)})
-		time.Sleep(3 * time.Second)
+		c.execCommand([]string{
+			fmt.Sprintf(`xdotool type "youtube.com/watch?v=%s"`, videoKey),
+			"xdotool key Return",
+		})
+		time.Sleep(1 * time.Second)
 		c.execComboKey("ctrl", "1")
 		time.Sleep(1 * time.Second)
 		c.execComboKey("ctrl", "w")
