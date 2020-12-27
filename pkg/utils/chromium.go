@@ -14,12 +14,8 @@ type Command struct {
 }
 
 const (
-	SPEED_0_75   = "a"
-	SPEED_1      = "b"
-	SPEED_1_25   = "c"
-	SPEED_1_5    = "d"
-	SPEED_1_75   = "e"
-	SPEED_2      = "f"
+	SPEED_LESS   = "a"
+	SPEED_UP     = "b"
 	FORWARD      = "g"
 	FORWARD_MORE = "h"
 	BACK         = "i"
@@ -31,7 +27,7 @@ const (
 type Commandor struct {
 	appWindow   string
 	muV         *sync.RWMutex
-	videos      map[string]string
+	videos      map[string]float32
 	xdotool     string
 	browserPath string
 }
@@ -39,7 +35,7 @@ type Commandor struct {
 func NewCommandor() *Commandor {
 	return &Commandor{
 		appWindow:   "Chromium",
-		videos:      make(map[string]string),
+		videos:      make(map[string]float32),
 		muV:         &sync.RWMutex{},
 		xdotool:     "/usr/bin/xdotool",
 		browserPath: "/usr/bin/chromium-browser",
@@ -49,11 +45,45 @@ func NewCommandor() *Commandor {
 func (c *Commandor) HandleCommand(cmd *Command) {
 	log.Println(fmt.Sprintf("handle command action: %s 4 %s", cmd.Cmd, cmd.ActionID))
 	switch cmd.Cmd {
+	case SPEED_UP:
+		c.execComboKey("shift", ">")
+	case SPEED_LESS:
+		c.execComboKey("shift", "<")
+	case BACK:
+		c.execComboKey("shift", "<")
+	case BACK_MORE:
+		c.execComboKey("shift", "<")
+		c.execComboKey("shift", "<")
+		c.execComboKey("shift", "<")
+	case FORWARD:
+		c.execComboKey("shift", ">")
+	case FORWARD_MORE:
+		c.execComboKey("shift", ">")
+		c.execComboKey("shift", ">")
+		c.execComboKey("shift", ">")
 	case CLOSE:
 		c.closeAll()
 	case PLAY:
 		c.playWin(cmd.ActionID)
 	}
+}
+
+func (c *Commandor) execKey(key string) {
+	c.execCommand([]string{
+		"xdotool windowactivate $(%s search --name 'Chromium')",
+		"xdotool mousemove 500 500",
+		fmt.Sprintf("xdotool key %s", key),
+	})
+}
+
+func (c *Commandor) execComboKey(key1, key2 string) {
+	c.execCommand([]string{
+		"xdotool windowactivate $(%s search --name 'Chromium')",
+		"xdotool mousemove 500 500",
+		fmt.Sprintf("xdotool keydown %s keydown %s", key1, key2),
+		"sleep 0.1",
+		fmt.Sprintf("xdotool keyup %s keyup %s", key1, key2),
+	})
 }
 
 func (c *Commandor) playWin(videoKey string) {
@@ -63,11 +93,16 @@ func (c *Commandor) playWin(videoKey string) {
 		fmt.Sprintf(`xdotool type "youtube.com/watch?v=%s"`, videoKey),
 		"xdotool key Return",
 		//"xdotool windowactivate $(%s search --name 'Chromium')",
-		"xdotool mousemove 600 600",
+		"sleep 4",
+		"xdotool mousemove 500 500",
 		"xdotool click 1",
 		"xdotool key space",
 	}
 	c.execCommand(cmdList)
+	c.muV.Lock()
+	c.videos = map[string]float32{}
+	c.videos["speed"] = 1
+	c.muV.Unlock()
 }
 
 func (c *Commandor) closeAll() {
@@ -75,7 +110,7 @@ func (c *Commandor) closeAll() {
 		"xdotool windowkill $(xdotool search --name 'Chromium')",
 	})
 	c.muV.Lock()
-	c.videos = map[string]string{}
+	c.videos = map[string]float32{}
 	c.muV.Unlock()
 }
 
