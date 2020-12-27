@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
+	"strconv"
 	"strings"
 	"sync"
 )
@@ -27,13 +28,13 @@ const (
 type Commandor struct {
 	appWindow string
 	muV       *sync.RWMutex
-	playing   bool
+	playing   string
 }
 
 func NewCommandor() *Commandor {
 	return &Commandor{
 		appWindow: "Chromium",
-		playing:   false,
+		playing:   "",
 		muV:       &sync.RWMutex{},
 	}
 }
@@ -43,24 +44,36 @@ func (c *Commandor) HandleCommand(cmd *Command) {
 	switch cmd.Cmd {
 	case SPEED_UP:
 		c.execComboKey("shift", "greater")
+		return
 	case SPEED_LESS:
 		c.execComboKey("shift", "less")
+		return
 	case BACK:
 		c.execComboKey("shift", "Left")
+		return
 	case BACK_MORE:
 		c.execComboKey("shift", "Left")
 		c.execComboKey("shift", "Left")
 		c.execComboKey("shift", "Left")
+		return
 	case FORWARD:
 		c.execComboKey("shift", "Right")
+		return
 	case FORWARD_MORE:
 		c.execComboKey("shift", "Right")
 		c.execComboKey("shift", "Right")
 		c.execComboKey("shift", "Right")
+		return
 	case CLOSE:
 		c.closeAll()
+		return
 	case PLAY:
 		c.playWin(cmd.ActionID)
+		return
+	}
+	_, err := strconv.Atoi(cmd.Cmd)
+	if err == nil {
+		c.execKey(cmd.Cmd)
 	}
 }
 
@@ -83,7 +96,7 @@ func (c *Commandor) execComboKey(key1, key2 string) {
 }
 
 func (c *Commandor) playWin(videoKey string) {
-	if c.playing {
+	if c.playing == videoKey {
 		c.execCommand([]string{
 			"xdotool mousemove 500 500",
 			"xdotool click 1",
@@ -103,7 +116,7 @@ func (c *Commandor) playWin(videoKey string) {
 	}
 	c.execCommand(cmdList)
 	c.muV.Lock()
-	c.playing = true
+	c.playing = videoKey
 	c.muV.Unlock()
 }
 
@@ -112,7 +125,7 @@ func (c *Commandor) closeAll() {
 		"xdotool windowkill $(xdotool search --name 'Chromium')",
 	})
 	c.muV.Lock()
-	c.playing = false
+	c.playing = ""
 	c.muV.Unlock()
 }
 
