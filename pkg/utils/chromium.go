@@ -28,6 +28,7 @@ const (
 	VOLUME_UP    = "v"
 	VOLUME_DOWN  = "x"
 	VOLUME_MUTE  = "m"
+	REBOOT       = "r"
 )
 
 type Commandor struct {
@@ -89,6 +90,10 @@ func (c *Commandor) HandleCommand(cmd *Command) {
 	case PLAY:
 		c.playWin(cmd.ActionID)
 		return
+	case REBOOT:
+		c.execCommand([]string{"sudo reboot now"})
+		return
+
 	}
 	_, err := strconv.Atoi(cmd.Cmd)
 	if err == nil {
