@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 	"raspberry_chrome_controller/pkg/config"
 	"raspberry_chrome_controller/pkg/logger"
 	"raspberry_chrome_controller/pkg/utils"
@@ -56,10 +55,7 @@ func readStream(appConf *config.AppConfig) {
 			logger.Error("can not receive", err)
 			return
 		}
-		log.Printf("Resp received: %s - %s", resp.ActionID, resp.Cmd)
-		commando.HandleCommand(&utils.Command{
-			Cmd:      resp.Cmd,
-			ActionID: resp.ActionID,
-		})
+		logger.Info("Resp received: ", zap.String("action", resp.ActionID), zap.String("cmd", resp.Cmd))
+		go commando.HandleCommand(&utils.Command{Cmd: resp.Cmd, ActionID: resp.ActionID})
 	}
 }
