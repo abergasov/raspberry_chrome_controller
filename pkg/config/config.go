@@ -11,11 +11,13 @@ import (
 )
 
 type AppConfig struct {
-	HostURL  string `yaml:"host_url"`
-	Path     string `yaml:"path"`
-	UseSSL   bool   `yaml:"use_ssl"`
-	KeyToken string `yaml:"key_token"`
-	FullPath string `yaml:"full_path"`
+	HostURL    string `yaml:"host_url"`
+	Path       string `yaml:"path"`
+	UseSSL     bool   `yaml:"use_ssl"`
+	KeyToken   string `yaml:"key_token"`
+	FullPath   string `yaml:"full_path"`
+	ListenChat int64  `yaml:"listen_chat"`
+	GRPCPath   string `yaml:"grpc_path"`
 }
 
 func InitConf(confFile string) *AppConfig {

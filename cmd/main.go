@@ -1,65 +1,50 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"io/ioutil"
+	"context"
 	"log"
-	"net/http"
 	"raspberry_chrome_controller/pkg/config"
 	"raspberry_chrome_controller/pkg/logger"
 	"raspberry_chrome_controller/pkg/utils"
-	"time"
+
+	"google.golang.org/grpc"
+
+	pb "raspberry_chrome_controller/pkg/grpc"
 
 	"go.uber.org/zap"
 )
-
-type PiCommander struct {
-	commando *utils.Commandor
-}
 
 func main() {
 	logger.NewLogger()
 	appConf := config.InitConf("/etc/commando.yaml")
 	logger.Info("Starting app", zap.String("token", appConf.KeyToken), zap.String("host", appConf.HostURL))
 
-	piCmd := PiCommander{
-		commando: utils.NewCommandor(),
-	}
-
-	ticker := time.NewTicker(150 * time.Millisecond)
-
-	var str []byte
-	client := &http.Client{}
-	req, _ := http.NewRequest("POST", appConf.FullPath, bytes.NewBuffer(str))
-	req.Header.Set("Token", appConf.KeyToken)
-	for range ticker.C {
-		piCmd.curlConnect(client, req)
-	}
-}
-
-func (p *PiCommander) curlConnect(client *http.Client, req *http.Request) {
-	response, err := client.Do(req)
+	// dail server
+	conn, err := grpc.Dial(appConf.GRPCPath, grpc.WithInsecure())
 	if err != nil {
-		log.Println("error in curl request", err.Error())
-		return
+		logger.Fatal("can not connect with server", err)
 	}
-	defer response.Body.Close()
-	body, errB := ioutil.ReadAll(response.Body)
-	if errB != nil {
-		log.Println("error in parse curl request", errB.Error())
-		return
-	}
-	var pR struct {
-		Ok  bool           `json:"ok"`
-		Cmd *utils.Command `json:"cmd"`
-	}
-	err = json.Unmarshal(body, &pR)
+
+	// create stream
+	client := pb.NewCommandStreamClient(conn)
+	stream, err := client.ListenCommands(context.Background(), &pb.Request{TargetChat: 1})
 	if err != nil {
-		log.Println("error in parse curl request", err.Error())
-		return
+		logger.Fatal("open stream error", err)
 	}
-	if pR.Cmd != nil {
-		p.commando.HandleCommand(pR.Cmd)
-	}
+
+	var resp *pb.Response
+	commando := utils.NewCommandor()
+	go func() {
+		for {
+			resp, err = stream.Recv()
+			if err != nil {
+				logger.Fatal("can not receive", err)
+			}
+			log.Printf("Resp received: %s - %s", resp.ActionID, resp.Cmd)
+			commando.HandleCommand(&utils.Command{
+				Cmd:      resp.Cmd,
+				ActionID: resp.ActionID,
+			})
+		}
+	}()
 }

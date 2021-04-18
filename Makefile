@@ -24,3 +24,7 @@ run:
 	@echo "-- building puppet binary"
 	go build -ldflags "-X main.buildHash=${FILE_HASH} -X main.buildTime=${BUILD_TIME}" -o ./bin/commando ./cmd
 	./bin/commando
+
+proto:
+	@echo "-- generate proto"
+	protoc ./api/* --go_out=plugins=grpc:./pkg/grpc
