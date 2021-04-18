@@ -22,7 +22,7 @@ func main() {
 		zap.String("token", appConf.KeyToken),
 		zap.String("host", appConf.HostURL),
 		zap.String("grpc", appConf.GRPCPath),
-		zap.String("chat", appConf.ListenChat),
+		zap.Int64("chat", appConf.ListenChat),
 	)
 
 	// dail server
