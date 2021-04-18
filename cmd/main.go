@@ -33,6 +33,7 @@ func main() {
 }
 
 func readStream(appConf *config.AppConfig) {
+	logger.Info("connect to server", zap.String("path", appConf.GRPCPath))
 	conn, err := grpc.Dial(appConf.GRPCPath, grpc.WithInsecure())
 	if err != nil {
 		logger.Error("can not connect with server", err)
