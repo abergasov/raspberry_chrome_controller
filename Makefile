@@ -4,10 +4,10 @@ install:
 	@echo "-- creating service"
 	sudo mkdir -p /home/pi/.config/autostart/
 	sudo cp commando.desktop /home/pi/.config/autostart/commando.desktop
-	pkill commando
 	sudo cp configs/conf.yaml /etc/commando.yaml
 	sudo cp bin/commando /usr/bin/commando
 	sudo chmod +x /usr/bin/commando
+	pkill commando
 
 build_rasp:
 	env GOOS=linux GOARCH=arm GOARM=5 go build -o ./bin/commando ./cmd
