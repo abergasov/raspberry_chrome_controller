@@ -40,17 +40,15 @@ func main() {
 
 	var resp *pb.Response
 	commando := utils.NewCommandor()
-	go func() {
-		for {
-			resp, err = stream.Recv()
-			if err != nil {
-				logger.Fatal("can not receive", err)
-			}
-			log.Printf("Resp received: %s - %s", resp.ActionID, resp.Cmd)
-			commando.HandleCommand(&utils.Command{
-				Cmd:      resp.Cmd,
-				ActionID: resp.ActionID,
-			})
+	for {
+		resp, err = stream.Recv()
+		if err != nil {
+			logger.Fatal("can not receive", err)
 		}
-	}()
+		log.Printf("Resp received: %s - %s", resp.ActionID, resp.Cmd)
+		commando.HandleCommand(&utils.Command{
+			Cmd:      resp.Cmd,
+			ActionID: resp.ActionID,
+		})
+	}
 }
