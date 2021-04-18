@@ -6,6 +6,7 @@ import (
 	"raspberry_chrome_controller/pkg/config"
 	"raspberry_chrome_controller/pkg/logger"
 	"raspberry_chrome_controller/pkg/utils"
+	"time"
 
 	"google.golang.org/grpc"
 
@@ -25,17 +26,25 @@ func main() {
 		zap.Int64("chat", appConf.ListenChat),
 	)
 
-	// dail server
+	for {
+		readStream(appConf)
+		time.Sleep(3 * time.Second)
+	}
+}
+
+func readStream(appConf *config.AppConfig) {
 	conn, err := grpc.Dial(appConf.GRPCPath, grpc.WithInsecure())
 	if err != nil {
-		logger.Fatal("can not connect with server", err)
+		logger.Error("can not connect with server", err)
+		return
 	}
 
 	// create stream
 	client := pb.NewCommandStreamClient(conn)
 	stream, err := client.ListenCommands(context.Background(), &pb.Request{TargetChat: appConf.ListenChat})
 	if err != nil {
-		logger.Fatal("open stream error", err)
+		logger.Error("open stream error", err)
+		return
 	}
 
 	var resp *pb.Response
@@ -43,7 +52,8 @@ func main() {
 	for {
 		resp, err = stream.Recv()
 		if err != nil {
-			logger.Fatal("can not receive", err)
+			logger.Error("can not receive", err)
+			return
 		}
 		log.Printf("Resp received: %s - %s", resp.ActionID, resp.Cmd)
 		commando.HandleCommand(&utils.Command{
