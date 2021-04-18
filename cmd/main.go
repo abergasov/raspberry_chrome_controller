@@ -17,7 +17,13 @@ import (
 func main() {
 	logger.NewLogger()
 	appConf := config.InitConf("/etc/commando.yaml")
-	logger.Info("Starting app", zap.String("token", appConf.KeyToken), zap.String("host", appConf.HostURL))
+	logger.Info(
+		"Starting app",
+		zap.String("token", appConf.KeyToken),
+		zap.String("host", appConf.HostURL),
+		zap.String("grpc", appConf.GRPCPath),
+		zap.String("chat", appConf.ListenChat),
+	)
 
 	// dail server
 	conn, err := grpc.Dial(appConf.GRPCPath, grpc.WithInsecure())
@@ -27,7 +33,7 @@ func main() {
 
 	// create stream
 	client := pb.NewCommandStreamClient(conn)
-	stream, err := client.ListenCommands(context.Background(), &pb.Request{TargetChat: 1})
+	stream, err := client.ListenCommands(context.Background(), &pb.Request{TargetChat: appConf.ListenChat})
 	if err != nil {
 		logger.Fatal("open stream error", err)
 	}
