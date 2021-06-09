@@ -9,6 +9,11 @@ install:
 	sudo cp bin/commando /usr/bin/commando
 	sudo chmod +x /usr/bin/commando
 
+cron_job:
+	@echo "-- creating cron job"
+	CRONENTRY="*/15 * * * * cd /home/pi/raspberry_chrome_controller && make install" ; \
+      crontab -l | { cat; echo ${CRONENTRY}; } | crontab -
+
 build_rasp:
 	env GOOS=linux GOARCH=arm GOARM=5 go build -o ./bin/commando ./cmd
 
