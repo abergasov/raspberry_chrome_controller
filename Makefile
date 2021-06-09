@@ -8,6 +8,7 @@ install:
 	if pgrep commando; then pkill commando; fi
 	sudo cp bin/commando /usr/bin/commando
 	sudo chmod +x /usr/bin/commando
+	commando
 
 cron_job:
 	@echo "-- creating cron job"
