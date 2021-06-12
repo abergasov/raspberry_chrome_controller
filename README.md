@@ -12,3 +12,10 @@ make cron_job
 https://chrome.google.com/webstore/detail/youtube-ad-auto-skipper/lokpenepehfdekijkebhpnpcjjpngpnd
 https://chrome.google.com/webstore/detail/auto-quality-for-youtube/iaddfgegjgjelgkanamleadckkpnjpjc
 ```
+
+## software
+```shell
+sudo apt install mpv 
+sudo apt update && sudo apt install snapd && sudo reboot
+sudo snap install core && sudo snap install youtube-dl && sudo ln -s /snap/bin/youtube-dl /bin/youtube-dl
+```
