@@ -14,6 +14,11 @@ import (
 	"go.uber.org/zap"
 )
 
+var (
+	buildTime = "_dev"
+	buildHash = "_dev"
+)
+
 func main() {
 	logger.NewLogger()
 	appConf := config.InitConf("/etc/commando.yaml")
@@ -41,7 +46,11 @@ func readStream(appConf *config.AppConfig) {
 
 	// create stream
 	client := pb.NewCommandStreamClient(conn)
-	stream, err := client.ListenCommands(context.Background(), &pb.Request{TargetChat: appConf.ListenChat})
+	stream, err := client.ListenCommands(context.Background(), &pb.Request{
+		TargetChat: appConf.ListenChat,
+		BuildHash:  buildHash,
+		BuildTime:  buildTime,
+	})
 	if err != nil {
 		logger.Error("open stream error", err)
 		return

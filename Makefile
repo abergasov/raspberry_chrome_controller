@@ -1,3 +1,6 @@
+FILE_HASH?=$(shell git rev-parse HEAD)
+BUILD_TIME?=$(shell date -u '+%Y-%m-%d_%H:%M:%S')
+
 install:
 	@echo "-- pull changes"
 	git pull origin master
@@ -15,7 +18,7 @@ cron_job:
 	crontab -l | { cat; echo "*/15 * * * * cd /home/pi/raspberry_chrome_controller && make install"; } | crontab -
 
 build_rasp:
-	env GOOS=linux GOARCH=arm GOARM=5 go build -o ./bin/commando ./cmd
+	env GOOS=linux GOARCH=arm GOARM=5 go build -ldflags "-X main.buildHash=${FILE_HASH} -X main.buildTime=${BUILD_TIME}" -o ./bin/commando ./cmd
 
 build:
 	@echo "-- pull changes"

@@ -38,11 +38,19 @@ type Commandor struct {
 }
 
 func NewCommandor() *Commandor {
-	return &Commandor{
+	c := &Commandor{
 		appWindow: "Chromium",
 		playing:   "",
 		muV:       &sync.RWMutex{},
 	}
+
+	c.execCommand([]string{
+		"sleep 4",
+		"xdotool mousemove 500 500",
+		"sleep 4",
+		"xdotool mousemove 100 100",
+	})
+	return c
 }
 
 func (c *Commandor) HandleCommand(cmd *Command) {
